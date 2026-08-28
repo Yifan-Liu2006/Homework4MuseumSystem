@@ -22,6 +22,10 @@ $env:DB_PASSWORD = "your-password"
 | POST | `/api/auth/register` | 使用手机号和密码注册游客 |
 | POST | `/api/auth/login` | 校验游客信息并签发 JWT |
 | GET | `/api/visitors/me` | 使用 JWT 查询当前游客 |
+| GET | `/api/real-persons` | 查询当前游客的实名人员 |
+| POST | `/api/real-persons` | 新增实名人员 |
+| PUT | `/api/real-persons/{personId}` | 修改本人名下的实名人员 |
+| DELETE | `/api/real-persons/{personId}` | 删除本人名下的实名人员 |
 
 注册和登录请求示例：
 
@@ -40,4 +44,6 @@ Authorization: Bearer <token>
 
 JWT 默认有效期为 7200 秒，可用 `JWT_EXPIRATION_SECONDS` 调整。部署时必须用至少 32 个字符的随机 `JWT_SECRET` 替换开发默认值。
 
-当前注册、登录、JWT 鉴权和游客信息查询已经完成，并通过 2 项 JWT 单元测试。下一步实现实名参观人员增删改查、证件哈希和脱敏。
+实名人员请求需要 `name`、`idType`、`idNumber` 和 `isSelf`。支持的证件类型为 `身份证`、`港澳台通行证` 和 `护照`。完整证件号码不会保存，数据库只保存分类 SHA-256 哈希和脱敏号码；每位游客最多设置一个“本人”实名信息。
+
+当前注册、登录、JWT 鉴权、游客信息和实名人员管理已经完成，并通过 5 项单元测试。下一步实现开放日期、场次、票种和库存查询接口。

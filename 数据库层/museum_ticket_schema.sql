@@ -17,6 +17,7 @@ CREATE TABLE real_person (
   name VARCHAR(50) NOT NULL,
   id_type ENUM('身份证','港澳台通行证','护照') NOT NULL,
   id_hash CHAR(64) NOT NULL,
+  id_masked VARCHAR(32) NOT NULL,
   is_self TINYINT(1) NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (personID), UNIQUE KEY uk_person_identity (id_type, id_hash),
