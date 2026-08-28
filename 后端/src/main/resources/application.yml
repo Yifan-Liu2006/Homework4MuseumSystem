@@ -29,3 +29,9 @@ app:
     expiration-scan-milliseconds: ${ORDER_EXPIRATION_SCAN_MILLISECONDS:60000}
   verification:
     key: ${VERIFICATION_KEY:change-this-verification-key}
+  admin:
+    jwt-secret: ${ADMIN_JWT_SECRET:change-this-admin-jwt-secret-at-least-32-characters}
+    jwt-expiration-seconds: ${ADMIN_JWT_EXPIRATION_SECONDS:14400}
+    bootstrap-account: ${ADMIN_BOOTSTRAP_ACCOUNT:admin}
+    bootstrap-password: ${ADMIN_BOOTSTRAP_PASSWORD:}
+    bootstrap-name: ${ADMIN_BOOTSTRAP_NAME:系统管理员}

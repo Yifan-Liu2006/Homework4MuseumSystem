@@ -35,6 +35,8 @@ $env:DB_PASSWORD = "your-password"
 | POST | `/api/orders/{orderId}/refund` | 退款并回退已售库存、作废凭证 |
 | GET | `/api/vouchers` | 查询当前游客的电子凭证 |
 | POST | `/api/verification/verify` | 使用独立核销密钥核销凭证 |
+| POST | `/api/admin/auth/login` | 管理员登录并签发独立 JWT |
+| GET | `/api/admin/auth/me` | 查询当前管理员和角色信息 |
 
 注册和登录请求示例：
 
@@ -101,4 +103,15 @@ X-Verification-Key: <VERIFICATION_KEY>
 
 部署时必须通过 `VERIFICATION_KEY` 设置至少 16 个字符的随机核销密钥。核销成功会将凭证改为已使用、订单明细改为已核验，并写入 `verification_record`；重复、作废或过期凭证返回失败结果。
 
-当前游客侧核心后端闭环已经完成。下一步实现管理员登录、角色权限、票务配置、运营统计和操作日志。
+首次创建超级管理员时，在启动前设置：
+
+```powershell
+$env:ADMIN_BOOTSTRAP_ACCOUNT = "admin"
+$env:ADMIN_BOOTSTRAP_PASSWORD = "请设置强密码"
+$env:ADMIN_BOOTSTRAP_NAME = "系统管理员"
+$env:ADMIN_JWT_SECRET = "至少32个字符的独立随机密钥"
+```
+
+仅当指定账号不存在时才会创建，后续启动不会覆盖密码。管理员登录成功后会写入操作日志。管理端 JWT 默认有效期为 14400 秒，可通过 `ADMIN_JWT_EXPIRATION_SECONDS` 修改；游客 JWT 不能访问后台路由，管理员 JWT 也不能替代游客 JWT。
+
+当前游客侧核心后端和管理员认证基础已经完成，共有 9 项单元测试通过。下一步实现后台开放日、场次、票种、库存配置，以及订单、支付、核销查询和运营统计。
