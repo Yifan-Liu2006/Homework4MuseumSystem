@@ -8,7 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OrderLifecycleService {
     private static final DateTimeFormatter ID_TIME_FORMAT = DateTimeFormatter.ofPattern("yyMMddHHmmssSSS");
     private final JdbcTemplate jdbcTemplate;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public OrderLifecycleService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -57,7 +64,49 @@ public class OrderLifecycleService {
         jdbcTemplate.update("""
                 UPDATE orders SET status = '已支付', pay_status = '已支付' WHERE ordersID = ?
                 """, orderId);
+        createVouchers(orderId);
         return response(orderId, "已支付", "已支付", "模拟支付成功");
+    }
+
+    @Transactional
+    public OrderStatusResponse refund(String orderId) {
+        LockedOrder order = lockOrder(orderId, CurrentVisitor.requireVisitorId());
+        if ("已退款".equals(order.status())) {
+            return response(orderId, "已退款", "已退款", "订单已退款，无需重复操作");
+        }
+        if (!"已支付".equals(order.status()) || !"已支付".equals(order.payStatus())) {
+            throw new BusinessException("只有已支付订单可以退款");
+        }
+        LocalDate visitDate = jdbcTemplate.queryForObject(
+                "SELECT visit_date FROM orders WHERE ordersID = ?", LocalDate.class, orderId);
+        if (visitDate == null || visitDate.isBefore(LocalDate.now())) {
+            throw new BusinessException("参观日期已过，不能退款");
+        }
+        Integer verifiedCount = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM orders_detail WHERE ordersID = ? AND verify_status = '已核验'
+                """, Integer.class, orderId);
+        if (verifiedCount != null && verifiedCount > 0) {
+            throw new BusinessException("订单包含已核验凭证，不能退款");
+        }
+
+        Map<String, Integer> quantities = lockOrderStocks(orderId);
+        for (Map.Entry<String, Integer> entry : quantities.entrySet()) {
+            int updated = jdbcTemplate.update("""
+                    UPDATE ticket_stock SET sold_quantity = sold_quantity - ?
+                    WHERE stockID = ? AND sold_quantity >= ?
+                    """, entry.getValue(), entry.getKey(), entry.getValue());
+            if (updated != 1) {
+                throw new BusinessException("已售库存异常，无法退款");
+            }
+        }
+        jdbcTemplate.update("UPDATE orders SET status = '已退款', pay_status = '已退款' WHERE ordersID = ?", orderId);
+        jdbcTemplate.update("UPDATE payment_record SET status = '已退款' WHERE ordersID = ?", orderId);
+        jdbcTemplate.update("UPDATE orders_detail SET verify_status = '已作废' WHERE ordersID = ?", orderId);
+        jdbcTemplate.update("""
+                UPDATE entry_voucher v JOIN orders_detail d ON d.detailID = v.detailID
+                SET v.status = '已作废' WHERE d.ordersID = ?
+                """, orderId);
+        return response(orderId, "已退款", "已退款", "退款成功，电子凭证已作废");
     }
 
     @Transactional
@@ -147,6 +196,36 @@ public class OrderLifecycleService {
     private void expireLockedOrder(LockedOrder order) {
         releaseLockedStock(order.orderId());
         jdbcTemplate.update("UPDATE orders SET status = '已过期' WHERE ordersID = ?", order.orderId());
+    }
+
+    private void createVouchers(String orderId) {
+        LocalDate visitDate = jdbcTemplate.queryForObject(
+                "SELECT visit_date FROM orders WHERE ordersID = ?", LocalDate.class, orderId);
+        if (visitDate == null) {
+            throw new BusinessException("订单参观日期不存在");
+        }
+        List<String> detailIds = jdbcTemplate.queryForList(
+                "SELECT detailID FROM orders_detail WHERE ordersID = ? ORDER BY detailID", String.class, orderId);
+        LocalDateTime expiredAt = LocalDateTime.of(visitDate.plusDays(1), LocalTime.MIDNIGHT);
+        for (String detailId : detailIds) {
+            jdbcTemplate.update("""
+                    INSERT INTO entry_voucher(voucherID, detailID, voucher_code, expired_at, status)
+                    VALUES (?, ?, ?, ?, '有效')
+                    """, generateId("V"), detailId, generateVoucherCode(detailId), expiredAt);
+        }
+    }
+
+    private String generateVoucherCode(String detailId) {
+        try {
+            byte[] randomBytes = new byte[32];
+            secureRandom.nextBytes(randomBytes);
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.update(detailId.getBytes(StandardCharsets.UTF_8));
+            digest.update(randomBytes);
+            return HexFormat.of().formatHex(digest.digest());
+        } catch (Exception exception) {
+            throw new IllegalStateException("无法生成电子凭证", exception);
+        }
     }
 
     private OrderStatusResponse response(String orderId, String status, String payStatus, String message) {

@@ -32,6 +32,9 @@ $env:DB_PASSWORD = "your-password"
 | GET | `/api/orders/{orderId}` | 查询当前游客指定订单及明细 |
 | POST | `/api/orders/{orderId}/pay` | 模拟支付待支付订单 |
 | POST | `/api/orders/{orderId}/cancel` | 取消待支付订单并释放库存 |
+| POST | `/api/orders/{orderId}/refund` | 退款并回退已售库存、作废凭证 |
+| GET | `/api/vouchers` | 查询当前游客的电子凭证 |
+| POST | `/api/verification/verify` | 使用独立核销密钥核销凭证 |
 
 注册和登录请求示例：
 
@@ -81,4 +84,21 @@ GET /api/ticketing/availability?from=2026-09-01&to=2026-09-30
 
 支持 `微信支付`、`支付宝` 和 `其他`。支付成功会将对应数量从 `locked_quantity` 转入 `sold_quantity` 并写入成功支付记录。取消仅允许待支付订单；后台定时任务默认每 60 秒扫描并关闭超时待支付订单，可通过 `ORDER_EXPIRATION_SCAN_MILLISECONDS` 调整。
 
-当前注册登录、JWT、实名人员、票务查询、事务下单、订单查询、模拟支付、主动取消和自动过期已经完成。下一步实现退款、电子凭证和入园核销。
+退款仅允许参观日期未过且没有任何已核验明细的已支付订单。退款会将 `sold_quantity` 扣回、订单与支付记录改为已退款、订单明细和电子凭证改为作废。
+
+支付成功会为每条订单明细生成一个 64 位凭证码。核销请求不使用游客 JWT，而是在请求头中提供独立密钥：
+
+```text
+X-Verification-Key: <VERIFICATION_KEY>
+```
+
+```json
+{
+  "voucherCode": "64位凭证码",
+  "workerId": null
+}
+```
+
+部署时必须通过 `VERIFICATION_KEY` 设置至少 16 个字符的随机核销密钥。核销成功会将凭证改为已使用、订单明细改为已核验，并写入 `verification_record`；重复、作废或过期凭证返回失败结果。
+
+当前游客侧核心后端闭环已经完成。下一步实现管理员登录、角色权限、票务配置、运营统计和操作日志。

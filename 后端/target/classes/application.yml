@@ -27,3 +27,5 @@ app:
     expiration-seconds: ${JWT_EXPIRATION_SECONDS:7200}
   order:
     expiration-scan-milliseconds: ${ORDER_EXPIRATION_SCAN_MILLISECONDS:60000}
+  verification:
+    key: ${VERIFICATION_KEY:change-this-verification-key}

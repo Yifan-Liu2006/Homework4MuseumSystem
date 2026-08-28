@@ -32,7 +32,14 @@ C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库�
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\ticketing\TicketAvailabilityController.java
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\ticketing\TicketAvailabilityResponse.java
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\ticketing\TicketAvailabilityService.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\verification\VerificationController.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\verification\VerificationRequest.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\verification\VerificationResponse.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\verification\VerificationService.java
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\visitor\Visitor.java
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\visitor\VisitorController.java
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\visitor\VisitorMapper.java
 C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\visitor\VisitorService.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\voucher\VoucherController.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\voucher\VoucherResponse.java
+C:\Users\刘亿凡\Desktop\Learning\程序设计\大学课\大二下 数据库原理\作业\大作业\后端\src\main\java\com\museum\ticket\voucher\VoucherService.java

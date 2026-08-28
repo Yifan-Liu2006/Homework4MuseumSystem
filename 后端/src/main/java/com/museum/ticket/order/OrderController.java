@@ -48,4 +48,9 @@ public class OrderController {
     public OrderStatusResponse cancel(@PathVariable String orderId) {
         return orderLifecycleService.cancel(orderId);
     }
+
+    @PostMapping("/{orderId}/refund")
+    public OrderStatusResponse refund(@PathVariable String orderId) {
+        return orderLifecycleService.refund(orderId);
+    }
 }
