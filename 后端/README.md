@@ -26,6 +26,7 @@ $env:DB_PASSWORD = "your-password"
 | POST | `/api/real-persons` | 新增实名人员 |
 | PUT | `/api/real-persons/{personId}` | 修改本人名下的实名人员 |
 | DELETE | `/api/real-persons/{personId}` | 删除本人名下的实名人员 |
+| GET | `/api/ticketing/availability` | 公开查询可预约日期、场次、票种和库存 |
 
 注册和登录请求示例：
 
@@ -46,4 +47,12 @@ JWT 默认有效期为 7200 秒，可用 `JWT_EXPIRATION_SECONDS` 调整。部�
 
 实名人员请求需要 `name`、`idType`、`idNumber` 和 `isSelf`。支持的证件类型为 `身份证`、`港澳台通行证` 和 `护照`。完整证件号码不会保存，数据库只保存分类 SHA-256 哈希和脱敏号码；每位游客最多设置一个“本人”实名信息。
 
-当前注册、登录、JWT 鉴权、游客信息和实名人员管理已经完成，并通过 5 项单元测试。下一步实现开放日期、场次、票种和库存查询接口。
+票务查询支持可选的 `from` 和 `to` 参数，格式为 `yyyy-MM-dd`。不传参数时查询今天起未来 30 天，单次范围不能超过 90 天：
+
+```text
+GET /api/ticketing/availability?from=2026-09-01&to=2026-09-30
+```
+
+接口只返回已开票、未闭馆、已经到达发布时间的开放日，以及启用场次和上架票种。可用库存等于总库存减去已售和锁定库存。
+
+当前注册登录、JWT、游客信息、实名人员管理和公开票务查询已经完成，并通过 7 项单元测试。下一步实现事务下单和游客订单查询。
