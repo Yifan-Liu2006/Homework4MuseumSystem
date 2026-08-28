@@ -25,3 +25,5 @@ app:
   jwt:
     secret: ${JWT_SECRET:change-this-development-secret-at-least-32-characters}
     expiration-seconds: ${JWT_EXPIRATION_SECONDS:7200}
+  order:
+    expiration-scan-milliseconds: ${ORDER_EXPIRATION_SCAN_MILLISECONDS:60000}

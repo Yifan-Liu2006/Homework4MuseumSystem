@@ -16,9 +16,11 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final OrderLifecycleService orderLifecycleService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, OrderLifecycleService orderLifecycleService) {
         this.orderService = orderService;
+        this.orderLifecycleService = orderLifecycleService;
     }
 
     @PostMapping
@@ -35,5 +37,15 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public OrderResponse get(@PathVariable String orderId) {
         return orderService.get(orderId);
+    }
+
+    @PostMapping("/{orderId}/pay")
+    public OrderStatusResponse pay(@PathVariable String orderId, @Valid @RequestBody PaymentRequest request) {
+        return orderLifecycleService.pay(orderId, request);
+    }
+
+    @PostMapping("/{orderId}/cancel")
+    public OrderStatusResponse cancel(@PathVariable String orderId) {
+        return orderLifecycleService.cancel(orderId);
     }
 }
