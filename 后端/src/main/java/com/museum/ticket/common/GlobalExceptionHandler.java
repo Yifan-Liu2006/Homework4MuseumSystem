@@ -12,6 +12,12 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiError handleUnauthorizedException(UnauthorizedException exception) {
+        return new ApiError(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), LocalDateTime.now());
+    }
+
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleBusinessException(BusinessException exception) {

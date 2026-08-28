@@ -20,7 +20,8 @@ $env:DB_PASSWORD = "your-password"
 | --- | --- | --- |
 | GET | `/api/system/health` | 检查后端和数据库状态 |
 | POST | `/api/auth/register` | 使用手机号和密码注册游客 |
-| POST | `/api/auth/login` | 校验游客手机号、密码和账号状态 |
+| POST | `/api/auth/login` | 校验游客信息并签发 JWT |
+| GET | `/api/visitors/me` | 使用 JWT 查询当前游客 |
 
 注册和登录请求示例：
 
@@ -31,4 +32,12 @@ $env:DB_PASSWORD = "your-password"
 }
 ```
 
-当前注册和登录功能已完成，并已使用 Java 25 + Maven 编译通过；下一步实现 JWT 令牌、接口鉴权和当前游客信息查询。若启动时需要下载依赖，请确保 Maven 可以访问中央仓库。
+登录响应中的 `token` 需要通过请求头发送给受保护接口：
+
+```text
+Authorization: Bearer <token>
+```
+
+JWT 默认有效期为 7200 秒，可用 `JWT_EXPIRATION_SECONDS` 调整。部署时必须用至少 32 个字符的随机 `JWT_SECRET` 替换开发默认值。
+
+当前注册、登录、JWT 鉴权和游客信息查询已经完成，并通过 2 项 JWT 单元测试。下一步实现实名参观人员增删改查、证件哈希和脱敏。

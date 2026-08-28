@@ -16,10 +16,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AuthService {
     private static final DateTimeFormatter ID_TIME_FORMAT = DateTimeFormatter.ofPattern("yyMMddHHmmssSSS");
     private final VisitorMapper visitorMapper;
+    private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(VisitorMapper visitorMapper) {
+    public AuthService(VisitorMapper visitorMapper, JwtService jwtService) {
         this.visitorMapper = visitorMapper;
+        this.jwtService = jwtService;
     }
 
     @Transactional
@@ -39,7 +41,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         Visitor visitor = findByMobile(request.mobile());
         if (visitor == null || !passwordEncoder.matches(request.password(), visitor.getPasswordHash())) {
             throw new BusinessException("手机号或密码错误");
@@ -50,7 +52,8 @@ public class AuthService {
 
         visitor.setLastLoginTime(LocalDateTime.now());
         visitorMapper.updateById(visitor);
-        return toResponse(visitor);
+        String token = jwtService.createToken(visitor.getVisitorId());
+        return new LoginResponse(token, "Bearer", jwtService.getExpirationSeconds(), toResponse(visitor));
     }
 
     private Visitor findByMobile(String mobile) {
