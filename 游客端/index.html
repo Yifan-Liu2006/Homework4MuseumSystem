@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>馆藏之间 · 博物馆预约</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grain"></div>
+  <header class="topbar">
+    <a class="brand" href="#top"><span class="brand-mark">M</span><span>馆藏之间<small>MUSEUM TICKETING</small></span></a>
+    <nav><a href="#booking">预约参观</a><a href="#people">实名人员</a><a href="#orders">我的订单</a></nav>
+    <button class="ghost-button" id="loginButton">游客登录</button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy reveal"><p class="eyebrow">THE CITY MUSEUM · 2026 SEASON</p><h1>把一段<br><em>时间</em>，留给文明。</h1><p class="hero-text">穿过光与尘，和那些比我们更久远的故事相遇。选择日期与时段，预约一场从容的博物馆之旅。</p><a class="primary-button" href="#booking">开始预约 <span>↗</span></a></div>
+      <div class="hero-art reveal"><div class="sun"></div><div class="arch arch-back"></div><div class="arch arch-front"><span>OPEN<br>YOUR<br>IMAGINATION</span></div><div class="hero-caption">展览季<br><strong>山海 · 重逢</strong></div></div>
+    </section>
+
+    <section class="booking-section" id="booking">
+      <div class="section-heading"><div><p class="eyebrow">01 / PLAN YOUR VISIT</p><h2>选择参观日期</h2></div><span class="section-note">实时库存 · 安心预约</span></div>
+      <div class="date-tools"><button class="icon-button" id="prevDate">←</button><div id="dateStrip" class="date-strip"></div><button class="icon-button" id="nextDate">→</button></div>
+      <div id="availability" class="availability"><div class="empty-state">正在读取开放场次…</div></div>
+    </section>
+
+    <section class="people-section" id="people"><div class="section-heading"><div><p class="eyebrow">02 / VISITORS</p><h2>同行人员</h2></div><button class="text-button" id="addPerson">＋ 添加实名人员</button></div><div id="peopleList" class="people-list"><div class="empty-state">登录后管理实名人员</div></div></section>
+    <section class="orders-section" id="orders"><div class="section-heading"><div><p class="eyebrow">03 / YOUR ARCHIVE</p><h2>我的预约</h2></div><button class="text-button" id="refreshOrders">刷新</button></div><div id="ordersList" class="orders-list"><div class="empty-state">登录后查看订单与电子凭证</div></div></section>
+  </main>
+
+  <footer><span>馆藏之间 · CITY MUSEUM</span><span>OPEN 09:00 — 17:00</span><span>一场与文明的约会</span></footer>
+
+  <dialog id="authDialog"><form method="dialog" id="authForm"><button class="close" value="cancel">×</button><p class="eyebrow">WELCOME BACK</p><h2 id="authTitle">游客登录</h2><label>手机号<input id="mobile" required pattern="1[3-9][0-9]{9}" placeholder="138 0013 8000"></label><label>密码<input id="password" required type="password" minlength="8" placeholder="至少 8 位"></label><button class="primary-button" id="authSubmit" value="default">登录 <span>↗</span></button><button type="button" class="switch-auth" id="switchAuth">还没有账号？立即注册</button><p class="form-error" id="authError"></p></form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
