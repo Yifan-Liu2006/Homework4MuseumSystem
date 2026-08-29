@@ -45,6 +45,10 @@ $env:DB_PASSWORD = "your-password"
 | POST/PUT | `/api/admin/ticket-config/ticket-types` | 新增或修改票种 |
 | GET | `/api/admin/ticket-config/stocks` | 库存列表 |
 | POST/PUT | `/api/admin/ticket-config/stocks` | 新增或调整库存 |
+| GET | `/api/admin/operations/orders` | 分页筛选后台订单 |
+| GET | `/api/admin/operations/payments` | 分页筛选支付记录 |
+| GET | `/api/admin/operations/verifications` | 分页筛选核销记录 |
+| GET | `/api/admin/operations/statistics` | 按日期区间查询运营统计 |
 
 注册和登录请求示例：
 
@@ -124,4 +128,10 @@ $env:ADMIN_JWT_SECRET = "至少32个字符的独立随机密钥"
 
 后台票务配置接口均需要管理员 JWT。开放日默认状态为 `未开票`，场次默认 `启用`，票种默认 `上架`；库存调整不能小于已售库存与锁定库存之和。所有新增和修改会记录 `operation_log`。
 
-当前游客侧核心后端、管理员认证和票务配置已经完成，共有 9 项单元测试通过。下一步实现后台订单、支付、核销查询和运营统计。
+后台查询分页参数为 `limit` 和 `offset`，单页最多 200 条。订单支持 `status`、`from`、`to` 筛选；支付支持状态筛选；核销支持结果筛选。统计接口示例：
+
+```text
+GET /api/admin/operations/statistics?from=2026-09-01&to=2026-09-30
+```
+
+当前游客侧核心后端，以及管理员认证、票务配置、运营查询和统计已经完成，共有 9 项单元测试通过。下一步实现细粒度角色权限，然后搭建游客端与管理端。
