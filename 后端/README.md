@@ -37,6 +37,14 @@ $env:DB_PASSWORD = "your-password"
 | POST | `/api/verification/verify` | 使用独立核销密钥核销凭证 |
 | POST | `/api/admin/auth/login` | 管理员登录并签发独立 JWT |
 | GET | `/api/admin/auth/me` | 查询当前管理员和角色信息 |
+| GET | `/api/admin/ticket-config/open-days` | 开放日列表 |
+| POST/PUT | `/api/admin/ticket-config/open-days` | 新增或修改开放日 |
+| GET | `/api/admin/ticket-config/slots` | 场次列表 |
+| POST/PUT | `/api/admin/ticket-config/slots` | 新增或修改场次 |
+| GET | `/api/admin/ticket-config/ticket-types` | 票种列表 |
+| POST/PUT | `/api/admin/ticket-config/ticket-types` | 新增或修改票种 |
+| GET | `/api/admin/ticket-config/stocks` | 库存列表 |
+| POST/PUT | `/api/admin/ticket-config/stocks` | 新增或调整库存 |
 
 注册和登录请求示例：
 
@@ -114,4 +122,6 @@ $env:ADMIN_JWT_SECRET = "至少32个字符的独立随机密钥"
 
 仅当指定账号不存在时才会创建，后续启动不会覆盖密码。管理员登录成功后会写入操作日志。管理端 JWT 默认有效期为 14400 秒，可通过 `ADMIN_JWT_EXPIRATION_SECONDS` 修改；游客 JWT 不能访问后台路由，管理员 JWT 也不能替代游客 JWT。
 
-当前游客侧核心后端和管理员认证基础已经完成，共有 9 项单元测试通过。下一步实现后台开放日、场次、票种、库存配置，以及订单、支付、核销查询和运营统计。
+后台票务配置接口均需要管理员 JWT。开放日默认状态为 `未开票`，场次默认 `启用`，票种默认 `上架`；库存调整不能小于已售库存与锁定库存之和。所有新增和修改会记录 `operation_log`。
+
+当前游客侧核心后端、管理员认证和票务配置已经完成，共有 9 项单元测试通过。下一步实现后台订单、支付、核销查询和运营统计。
