@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>馆藏之间 · 博物馆预约</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="extras.css">
 </head>
 <body>
   <div class="grain"></div>
@@ -33,6 +34,9 @@
   <footer><span>馆藏之间 · CITY MUSEUM</span><span>OPEN 09:00 — 17:00</span><span>一场与文明的约会</span></footer>
 
   <dialog id="authDialog"><form method="dialog" id="authForm"><button class="close" value="cancel">×</button><p class="eyebrow">WELCOME BACK</p><h2 id="authTitle">游客登录</h2><label>手机号<input id="mobile" required pattern="1[3-9][0-9]{9}" placeholder="138 0013 8000"></label><label>密码<input id="password" required type="password" minlength="8" placeholder="至少 8 位"></label><button class="primary-button" id="authSubmit" value="default">登录 <span>↗</span></button><button type="button" class="switch-auth" id="switchAuth">还没有账号？立即注册</button><p class="form-error" id="authError"></p></form></dialog>
+  <dialog id="personDialog"><form class="authForm" id="personForm"><button class="close" type="button" data-close="personDialog">×</button><p class="eyebrow">VISITOR PROFILE</p><h2>添加实名人员</h2><label>姓名<input id="personName" required maxlength="50"></label><label>证件类型<select id="idType"><option>身份证</option><option>港澳台通行证</option><option>护照</option></select></label><label>证件号码<input id="idNumber" required minlength="5"></label><label><input id="isSelf" type="checkbox"> 这是本人信息</label><button class="primary-button">保存人员 <span>↗</span></button><p class="form-error" id="personError"></p></form></dialog>
+  <dialog id="bookingDialog"><form class="authForm" id="bookingForm"><button class="close" type="button" data-close="bookingDialog">×</button><p class="eyebrow">CONFIRM VISIT</p><h2>确认预约</h2><div id="bookingTicket"></div><label>参观人员<select id="bookingPerson" required></select></label><button class="primary-button">提交订单 <span>↗</span></button><p class="form-error" id="bookingError"></p></form></dialog>
+  <dialog id="voucherDialog"><div class="authForm"><button class="close" type="button" data-close="voucherDialog">×</button><p class="eyebrow">DIGITAL PASS</p><h2>电子凭证</h2><div id="voucherList"></div></div></dialog>
   <script src="app.js"></script>
 </body>
 </html>
